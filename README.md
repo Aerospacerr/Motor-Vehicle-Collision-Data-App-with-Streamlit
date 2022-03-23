@@ -1,7 +1,7 @@
 # NY City Motor Vehicle Collision Visual App with Streamlit
 
 <p align="center">
-	<img src="  " />
+	<img src=" https://cdn.contexttravel.com/image/upload/w_1500,q_60/v1571947279/blog/36%20Hours%20in%20NYC/NewYorkStreets.jpg " />
 
 </p>
 
