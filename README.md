@@ -1,4 +1,4 @@
-# Item Based Collaborative Movie Recommendation System
+# NY City Motor Vehicle Collision Visual App with Streamlit
 
 <p align="center">
 	<img src="  " />
@@ -19,20 +19,20 @@
 ## Project info
 
 ## Dataset info
-Name: Online Retail II  
-Link: https://archive.ics.uci.edu/ml/machine-learning-databases/00502/   
-You can download it from the link, it is bigger than 25MB, therefore couldn't upload here.
-**InvoiceNo:** Invoice number.
+Name: New York City Motor Vehicle Collisions - Vehicles
+Link: https://catalog.data.gov/dataset/motor-vehicle-collisions-vehicles  
+Metadata Created Date: November 10, 2020
+Metadata Updated Date: March 14, 2022
+Publisher: data.cityofnewyork.us
 
 ## Technologies
 Project is created with:
 * PyCharm: 2021.3 
-* Pandas: 1.3.4 (especially "corrwith")
+* Google Colab
 
 
 	
 ## Setup
-To run this project, just run the functions at the bottom of code and call "item_based_recommender". That's it!
 
 ## Developments 
 
