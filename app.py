@@ -6,7 +6,7 @@ import plotly.express as px
 
 
 DATA_URL = (
-"Motor_Vehicle_Collisions_-_Crashes.csv"
+"https://data.cityofnewyork.us/api/views/h9gi-nx95/rows.csv"
 )
 
 st.title("Motor Vehicle Collisions in New York City")
