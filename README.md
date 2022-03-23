@@ -29,6 +29,13 @@ Publisher: data.cityofnewyork.us
 Project is created with:
 * PyCharm: 2021.3 
 * Google Colab
+* streamlit==1.6.0
+* pandas==1.4.1
+* numpy==1.22.3
+* plotly==5.6.0
+* plotly-express==0.4.1
+* pydeck==0.7.1
+* xlrd==2.0.1
 
 
 	
