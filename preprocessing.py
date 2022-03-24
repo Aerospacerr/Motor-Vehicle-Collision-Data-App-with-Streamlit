@@ -1,17 +1,17 @@
 import pandas as pd
 
-DATA_URL = "https://data.cityofnewyork.us/api/views/h9gi-nx95/rows.csv"
+# DATA_URL = "https://data.cityofnewyork.us/api/views/h9gi-nx95/rows.csv"
 
-# read data from url
+# read data from url, takes very long time
 # df = pd.read_csv(DATA_URL, low_memory=False)
 
-# read in the data from the csv file
+# read in the data from the previously downloaded csv file
 df = pd.read_csv('Motor_Vehicle_Collisions_-_Crashes.csv', low_memory=False)
 
 # remove all unwanted columns
 df.drop(columns=['LOCATION'], inplace=True)
 df = df.loc[:, ~df.columns.str.startswith('VEHICLE TYPE')]
-# probably remove more unwanted columns
+# probably remove more unwanted columns here?
 # df = df.loc[:, ~df.columns.str.startswith('CONTRIBUTING FACTOR')]
 
 # convert timestamps to datetime
@@ -32,6 +32,9 @@ df.set_index('timestamp', inplace=True)
 
 # lowercase of column names
 df.columns= df.columns.str.lower()
+
+# replace whitespace with underscores
+df.columns = df.columns.str.replace(' ','_')
 
 # write to feather file, still too large
 # df.reset_index().to_feather('crashes.feather', compression='lz4', compression_level=10)
