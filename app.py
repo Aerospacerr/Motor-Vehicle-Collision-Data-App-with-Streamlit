@@ -21,7 +21,7 @@ data = load_data()
 original_data = data
 
 st.header("Where are the most people injured in NYC")
-max_injured_people = data['number_of_persons_injured'].max()
+max_injured_people = int(data['number_of_persons_injured'].max())
 injured_people = st.slider("Number of persons injured in vehicle collisions", 0, max_injured_people)
 st.map(data.query("number_of_persons_injured >= @injured_people")[["latitude", "longitude"]].dropna(how="any"))
 
