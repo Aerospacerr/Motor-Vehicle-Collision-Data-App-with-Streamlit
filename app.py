@@ -17,6 +17,9 @@ def load_data():
     data = pd.read_parquet('crashes.parquet', engine='pyarrow')
     # drop rows with no lat/long values:
     data.dropna(subset=['latitude', 'longitude'], inplace=True)
+    # drop rows outside bounding box of NYC:
+    data = data[(data['latitude'] > 40.0) & (data['latitude'] < 42.0) &
+                (data['longitude'] > -76.0) & (data['longitude'] < -70.0)]
     return data
 
 data = load_data()
