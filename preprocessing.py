@@ -27,14 +27,14 @@ df = df.convert_dtypes()
 # sort the dataframe rows by timestamp
 df.sort_values(by=['timestamp'], inplace=True, ascending=False)
 
-# set index to timestamp column
-df.set_index('timestamp', inplace=True)
-
 # lowercase of column names
 df.columns= df.columns.str.lower()
 
 # replace whitespace with underscores
 df.columns = df.columns.str.replace(' ','_')
+
+# set index to collision id column
+# df.set_index('collision_id', inplace=True)
 
 # write to feather file, still too large
 # df.reset_index().to_feather('crashes.feather', compression='lz4', compression_level=10)
