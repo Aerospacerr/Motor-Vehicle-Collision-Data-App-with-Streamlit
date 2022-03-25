@@ -35,8 +35,18 @@ def filter_data_by_type_of_people(data, type_of_people, amount=8):
     return data[(data[type_of_people] > 0)][['on_street_name', 'off_street_name', type_of_people]].sort_values(
         by=[type_of_people], ascending=False).dropna(thresh=2).fillna('')[:amount]
 
+@st.experimental_memo
+def filter_data_by_year(data, year):
+    return data[data['timestamp'].dt.year == year]
+  
 with st.spinner("Loading data..."):
     data = load_data()
+    
+
+select_year = st.selectbox('Please Select The Year',
+            ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'])
+data = filter_data_by_year(data, select_year)
+
 
 st.header("Where are the most people injured in NYC")
 max_injured_people = int(data['number_of_persons_injured'].max())
