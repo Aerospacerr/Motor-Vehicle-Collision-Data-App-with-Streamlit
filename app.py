@@ -43,9 +43,9 @@ with st.spinner("Loading data..."):
     data = load_data()
     
 
-select_year = st.selectbox('Please Select The Year',
-            ['2020', '2021', '2022'])
-data = filter_data_by_year(data, select_year)
+#select_year = st.selectbox('Please Select The Year',
+#            ['2020', '2021', '2022'])
+#data = filter_data_by_year(data, select_year)
 
 
 st.header("Where are the most people injured in NYC")
