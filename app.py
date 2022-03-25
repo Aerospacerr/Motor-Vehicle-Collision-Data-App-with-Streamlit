@@ -44,7 +44,7 @@ with st.spinner("Loading data..."):
     
 
 select_year = st.selectbox('Please Select The Year',
-            ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'])
+            ['2020', '2021', '2022'])
 data = filter_data_by_year(data, select_year)
 
 
