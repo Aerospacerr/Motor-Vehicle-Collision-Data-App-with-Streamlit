@@ -22,16 +22,31 @@ def load_data():
                 (data['longitude'] > -76.0) & (data['longitude'] < -70.0)]
     return data
 
-data = load_data()
+@st.experimental_memo
+def query_data_by_persons_injured(data, injured_people):
+    return data.query(f'number_of_persons_injured >= {injured_people}')[["latitude", "longitude"]].dropna(how="any")
+
+@st.experimental_memo
+def filter_data_by_hour(data, hour):
+    return data[data['timestamp'].dt.hour == hour]
+
+@st.experimental_memo
+def filter_data_by_type_of_people(data, type_of_people, amount=8):
+    return data[(data[type_of_people] > 0)][['on_street_name', 'off_street_name', type_of_people]].sort_values(
+        by=[type_of_people], ascending=False).dropna(thresh=2).fillna('')[:amount]
+
+with st.spinner("Loading data..."):
+    data = load_data()
 
 st.header("Where are the most people injured in NYC")
 max_injured_people = int(data['number_of_persons_injured'].max())
 injured_people = st.slider("Number of persons injured in vehicle collisions", 0, max_injured_people)
-st.map(data=data.query("number_of_persons_injured >= @injured_people")[["latitude", "longitude"]].dropna(how="any"))
+data_by_persons_injured = query_data_by_persons_injured(data, injured_people)
+st.map(data=data_by_persons_injured)
 
 st.header("How many collisions occur during a given time of day?")
 hour = st.slider("Hour to look at", 0, 23)
-filtered_by_hour = data[data['timestamp'].dt.hour == hour]
+filtered_by_hour = filter_data_by_hour(data, hour)
 
 st.markdown("Vehicle collisions between %i:00 and %i:00" % (hour, (hour+1) % 24))
 midpoint = (filtered_by_hour['latitude'].median(), filtered_by_hour['longitude'].median())
@@ -59,10 +74,6 @@ st.write(pdk.Deck(
 ))
 
 st.subheader("Breakdown by minute between %i:00 and %i:00" % (hour, (hour+1) % 24))
-# filtered = data[
-#     (data['timestamp'].dt.hour >= hour) & (
-#         data['timestamp'].dt.hour <= (hour+1))
-# ]
 
 hist = np.histogram(filtered_by_hour['timestamp'].dt.minute, bins=60, range=(0, 60))[0]
 chart_data = pd.DataFrame({'minute': range(60), 'crashes': hist})
@@ -70,17 +81,12 @@ fig = px.bar(chart_data, x='minute', y='crashes', hover_data=['minute', 'crashes
 st.write(fig)
 
 st.header("Top 5 dangerous streets by affected type")
-select = st.selectbox('Affected type of people', ['Pedestrians', 'Cyclists', 'Motorists'])
+select = st.selectbox('Affected type of people injured or killed',
+            ['Persons Injured', 'Persons Killed', 'Pedestrians Injured', 'Pedestrians Killed',
+            'Cyclist Injured', 'Cyclist Killed', 'Motorist Injured', 'Motorist Killed',])
 
-if select == 'Pedestrians':
-    st.write(data.query("number_of_pedestrians_injured >= 1")[["on_street_name", "number_of_pedestrians_injured"]].sort_values(
-        by=['number_of_pedestrians_injured'], ascending=False).dropna(how='any')[:5])
-elif select == 'Cyclist':
-    st.write(data.query("number_of_cyclist_injured >= 1")[["on_street_name", "number_of_cyclist_injured"]].sort_values(
-        by=['number_of_cyclist_injured'], ascending=False).dropna(how='any')[:5])
-else:
-    st.write(data.query("number_of_motorist_injured >= 1")[["on_street_name", "number_of_motorist_injured"]].sort_values(
-        by=['number_of_motorist_injured'], ascending=False).dropna(how='any')[:5])
+query_persons_string = f'number_of_{select.lower().split()[0]}_{select.lower().split()[1]}'
+st.write(filter_data_by_type_of_people(data, query_persons_string))
 
 if st.checkbox("Show Raw Data", False):
     st.subheader('Raw Data')
