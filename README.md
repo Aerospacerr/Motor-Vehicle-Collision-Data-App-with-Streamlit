@@ -20,7 +20,7 @@
 
 ## Dataset info
 Name: New York City Motor Vehicle Collisions - Vehicles
-Link: https://catalog.data.gov/dataset/motor-vehicle-collisions-vehicles  
+Link: https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95
 Metadata Created Date: November 10, 2020
 Metadata Updated Date: March 14, 2022
 Publisher: data.cityofnewyork.us
