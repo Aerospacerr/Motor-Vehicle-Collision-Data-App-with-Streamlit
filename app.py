@@ -108,4 +108,4 @@ st.table(get_all_contributing_factors())
 
 if st.checkbox("Show Raw Data", False):
     st.subheader('Raw Data')
-    st.write(data.head(100))  # limit to first 100 rows
+    st.write(data.head(100).fillna(''))  # limit to first 100 rows
