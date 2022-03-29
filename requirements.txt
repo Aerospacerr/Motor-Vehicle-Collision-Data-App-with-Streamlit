@@ -4,5 +4,4 @@ pyarrow>=7.0.0
 plotly>=5.5.0
 plotly-express>=0.4.0
 pydeck>=0.7.0
-click==8.0.4
-streamlit>=1.8.0
+streamlit>=1.8.1
