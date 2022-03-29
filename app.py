@@ -1,9 +1,8 @@
-import streamlit as st
-import pandas as pd
 import numpy as np
-import pydeck as pdk
+import pandas as pd
 import plotly.express as px
-
+import pydeck as pdk
+import streamlit as st
 
 # DATA_URL = "https://data.cityofnewyork.us/api/views/h9gi-nx95/rows.csv"
 
@@ -12,7 +11,7 @@ st.set_page_config(page_title="Motor Vehicle Collisions in NYC", page_icon='🚓
 st.title("Motor Vehicle Collisions in NYC")
 st.markdown("This application is a Streamlit dashboard that can be used to analyze Motor Vehicle Collisions data from New York City.")
 
-@st.cache(persist=True)
+@st.cache(show_spinner=False)
 def load_data():
     data = pd.read_parquet('crashes.parquet', engine='pyarrow')
     # drop rows with no lat/long values:
@@ -22,21 +21,37 @@ def load_data():
                 (data['longitude'] > -76.0) & (data['longitude'] < -70.0)]
     return data
 
-@st.experimental_memo
+@st.cache(show_spinner=False)
 def query_data_by_persons_injured(data, injured_people):
     return data.query(f'number_of_persons_injured >= {injured_people}')[["latitude", "longitude"]].dropna(how="any")
 
-@st.experimental_memo
+@st.cache(show_spinner=False)
 def filter_data_by_hour(data, hour):
     return data[data['timestamp'].dt.hour == hour]
 
-@st.experimental_memo
+@st.cache(show_spinner=False)
 def filter_data_by_type_of_people(data, type_of_people, amount=8):
     return data[(data[type_of_people] > 0)][['on_street_name', 'off_street_name', type_of_people]].sort_values(
         by=[type_of_people], ascending=False).dropna(thresh=2).fillna('')[:amount]
 
+@st.cache(show_spinner=False)
+def filter_data_by_year(data, year):
+    return data[data['timestamp'].dt.year == year]
+
+@st.cache(show_spinner=False)
+def get_all_contributing_factors():
+    contrib_cols = [col for col in data.columns if col.startswith('contributing_factor')]
+    contrib_sum = data[contrib_cols].apply(pd.Series.value_counts).fillna(0).sum(axis=1).sort_values(ascending=False).astype(int).to_frame()
+    contrib_sum.index.rename('Contributing Factors', inplace=True)
+    contrib_sum.columns = ['Frequency of mention']
+    return contrib_sum
+
 with st.spinner("Loading data..."):
     data = load_data()
+
+#select_year = st.selectbox('Please Select The Year',
+#            ['2020', '2021', '2022'])
+#data = filter_data_by_year(data, select_year)
 
 st.header("Where are the most people injured in NYC")
 max_injured_people = int(data['number_of_persons_injured'].max())
@@ -86,8 +101,11 @@ select = st.selectbox('Affected type of people injured or killed',
             'Cyclist Injured', 'Cyclist Killed', 'Motorist Injured', 'Motorist Killed',])
 
 query_persons_string = f'number_of_{select.lower().split()[0]}_{select.lower().split()[1]}'
-st.write(filter_data_by_type_of_people(data, query_persons_string))
+st.table(filter_data_by_type_of_people(data, query_persons_string))
+
+st.subheader("Contributing Factors for accidents")
+st.table(get_all_contributing_factors())
 
 if st.checkbox("Show Raw Data", False):
     st.subheader('Raw Data')
-    st.write(data.head(100))  # limit to first 100 rows
+    st.write(data.head(100).fillna(''))  # limit to first 100 rows
