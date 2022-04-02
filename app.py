@@ -30,7 +30,7 @@ def filter_data_by_hour(data, hour):
     return data[data['timestamp'].dt.hour == hour]
 
 @st.cache(show_spinner=False)
-def filter_data_by_type_of_people(data, type_of_people, amount=8):
+def filter_data_by_type_of_people(data, type_of_people, amount=10):
     return data[(data[type_of_people] > 0)][['on_street_name', 'off_street_name', type_of_people]].sort_values(
         by=[type_of_people], ascending=False).dropna(thresh=2).fillna('')[:amount]
 
@@ -94,7 +94,7 @@ chart_data = pd.DataFrame({'minute': range(60), 'crashes': hist})
 fig = px.bar(chart_data, x='minute', y='crashes', hover_data=['minute', 'crashes'], height=400)
 st.write(fig)
 
-st.header("Top 8 dangerous streets by affected type")
+st.header("Top 10 dangerous streets by affected type")
 select = st.selectbox('Affected type of people injured or killed',
             ['Persons Injured', 'Persons Killed', 'Pedestrians Injured', 'Pedestrians Killed',
             'Cyclist Injured', 'Cyclist Killed', 'Motorist Injured', 'Motorist Killed',])
