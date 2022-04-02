@@ -23,13 +23,11 @@ def load_data():
 
 @st.cache(show_spinner=False)
 def query_data_by_persons_injured(data, injured_people):
-    df = data.query(f'number_of_persons_injured >= {injured_people}')[["latitude", "longitude"]].dropna(how="any")
-    return df[['timestamp', 'latitude', 'longitude']]  # remove all unnecessary columns for map
+    return data.query(f'number_of_persons_injured >= {injured_people}')[["latitude", "longitude"]].dropna(how="any")
 
 @st.cache(show_spinner=False)
 def filter_data_by_hour(data, hour):
-    df = data[data['timestamp'].dt.hour == hour]
-    return df[['timestamp', 'latitude', 'longitude']]  # remove all unnecessary columns for map
+    return data[data['timestamp'].dt.hour == hour]
 
 @st.cache(show_spinner=False)
 def filter_data_by_type_of_people(data, type_of_people, amount=8):
@@ -38,8 +36,7 @@ def filter_data_by_type_of_people(data, type_of_people, amount=8):
 
 @st.cache(show_spinner=False)
 def filter_data_by_year(data, year):
-    df = data[data['timestamp'].dt.year == year]
-    return df[['timestamp', 'latitude', 'longitude']] # remove all unnecessary columns for map
+    return data[data['timestamp'].dt.year == year]
 
 @st.cache(show_spinner=False)
 def get_all_contributing_factors():
@@ -67,7 +64,7 @@ hour = st.slider("Hour to look at", 0, 23)
 filtered_by_hour = filter_data_by_hour(data, hour)
 
 st.markdown("Vehicle collisions between %i:00 and %i:00" % (hour, (hour+1) % 24))
-midpoint = (filtered_by_hour['latitude'].median(), filtered_by_hour['longitude'].median())
+midpoint = (float(filtered_by_hour['latitude'].median()), float(filtered_by_hour['longitude'].median()))
 st.write(pdk.Deck(
     map_style="mapbox://styles/mapbox/light-v9",
     initial_view_state={
@@ -86,7 +83,6 @@ st.write(pdk.Deck(
             pickable=True,
             elevation_scale=4,
             elevation_range=[0, 1000],
-
         ),
     ],
 ))
