@@ -22,9 +22,19 @@ df['LONGITUDE'].replace(to_replace=0, value=np.nan, inplace=True)
 # convert timestamps to datetime
 df['timestamp'] = pd.to_datetime(df['CRASH DATE'] + ' ' + df['CRASH TIME'], format='%m/%d/%Y %H:%M')
 
+# we don't need these columns anymore
+df.drop(columns=['CRASH DATE','CRASH TIME'], inplace=True)
+
 # convert all integer columns to integer
 integer_columns = df.columns.str.contains('NUMBER OF')
-df.loc[:, integer_columns] = df.loc[:, integer_columns].astype(pd.Int16Dtype())
+df.loc[:, integer_columns] = df.loc[:, integer_columns].astype(pd.Int8Dtype())
+
+# convert contributing factor columns to categorical datatype
+contributing_factors = df.columns.str.contains('CONTRIBUTING FACTOR')
+df.loc[:, contributing_factors] = df.loc[:, contributing_factors].astype(pd.CategoricalDtype())
+
+# convert lat, lon to float32 for lower memory usage
+df = df.astype({'LATITUDE': pd.Float32Dtype(), 'LONGITUDE': pd.Float32Dtype()})
 
 # convert all datatypes properly
 df = df.convert_dtypes()
