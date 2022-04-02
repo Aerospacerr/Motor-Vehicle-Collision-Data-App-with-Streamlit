@@ -23,11 +23,13 @@ def load_data():
 
 @st.cache(show_spinner=False)
 def query_data_by_persons_injured(data, injured_people):
-    return data.query(f'number_of_persons_injured >= {injured_people}')[["latitude", "longitude"]].dropna(how="any")
+    df = data.query(f'number_of_persons_injured >= {injured_people}')[["latitude", "longitude"]].dropna(how="any")
+    return df[['timestamp', 'latitude', 'longitude']]  # remove all unnecessary columns for map
 
 @st.cache(show_spinner=False)
 def filter_data_by_hour(data, hour):
-    return data[data['timestamp'].dt.hour == hour]
+    df = data[data['timestamp'].dt.hour == hour]
+    return df[['timestamp', 'latitude', 'longitude']]  # remove all unnecessary columns for map
 
 @st.cache(show_spinner=False)
 def filter_data_by_type_of_people(data, type_of_people, amount=8):
@@ -36,7 +38,8 @@ def filter_data_by_type_of_people(data, type_of_people, amount=8):
 
 @st.cache(show_spinner=False)
 def filter_data_by_year(data, year):
-    return data[data['timestamp'].dt.year == year]
+    df = data[data['timestamp'].dt.year == year]
+    return df[['timestamp', 'latitude', 'longitude']] # remove all unnecessary columns for map
 
 @st.cache(show_spinner=False)
 def get_all_contributing_factors():
@@ -95,7 +98,7 @@ chart_data = pd.DataFrame({'minute': range(60), 'crashes': hist})
 fig = px.bar(chart_data, x='minute', y='crashes', hover_data=['minute', 'crashes'], height=400)
 st.write(fig)
 
-st.header("Top 5 dangerous streets by affected type")
+st.header("Top 8 dangerous streets by affected type")
 select = st.selectbox('Affected type of people injured or killed',
             ['Persons Injured', 'Persons Killed', 'Pedestrians Injured', 'Pedestrians Killed',
             'Cyclist Injured', 'Cyclist Killed', 'Motorist Injured', 'Motorist Killed',])
