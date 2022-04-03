@@ -49,7 +49,7 @@ df.reset_index(drop=True, inplace=True)
 df.columns= df.columns.str.lower()
 
 # replace whitespace with underscores
-df.columns = df.columns.str.replace(' ','_')
+df.columns = df.columns.str.replace(' ', '_')
 
 # set index to collision id column
 # df.set_index('collision_id', inplace=True)
