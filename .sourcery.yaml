@@ -1,0 +1,5 @@
+# configuration file for source code analysis tool "Sourcery"
+refactor:
+  python_version: '3.9'
+  skip:
+    - assign-if-exp
