@@ -24,3 +24,4 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_REF: ${{ github.ref }}
+          GITHUB_BRANCH: ${{ github.branch }}

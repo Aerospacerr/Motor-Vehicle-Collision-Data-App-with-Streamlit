@@ -1,6 +1,6 @@
 import io
 import logging
-from pathlib import Path
+import pathlib
 
 import pandas as pd
 import requests
@@ -11,7 +11,13 @@ logformat = '%(levelname)s:%(module)s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=logformat)
 
 
-def download_and_process(file_name='crashes.csv', url=preprocessing.DATA_URL):
+def download_and_process(file_name='crashes.parquet', url=preprocessing.DATA_URL):
+    """Downloads data from url and run preprocessing and store in parquet file.
+
+    Args:
+        file_name (str, optional): File name for parquet file. Defaults to 'crashes.parquet'.
+        url (str, optional): URL for download. Defaults to preprocessing.DATA_URL.
+    """
     logging.info(f'Downloading data from {url}')
     try:
         # download csv data with timout of 10 minutes
@@ -36,13 +42,19 @@ def download_and_process(file_name='crashes.csv', url=preprocessing.DATA_URL):
 
 
 def download_to_file_with_progress(file_name='crashes.csv', url=preprocessing.DATA_URL):
+    """Downloads data from url and writes to file_name.
+
+    Args:
+        file_name (str, optional): File name. Defaults to 'crashes.csv'.
+        url (str, optional): URL for download. Defaults to preprocessing.DATA_URL.
+    """
     chunk_size = 65536  # bytes
     update_every = 10_000_000  # every 10MB
     update_divisor = int(update_every // chunk_size)  # number of chunks
 
     # delete old file if exists
-    # Path(file_name).unlink(missing_ok=True)  # Python 3.8+
-    oldfile = Path(file_name)  # Python 3.7-
+    # pathlib.Path(file_name).unlink(missing_ok=True)  # Python 3.8+
+    oldfile = pathlib.Path(file_name)  # Python 3.7-
     if oldfile.exists():
         oldfile.unlink()
 

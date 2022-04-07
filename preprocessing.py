@@ -15,6 +15,12 @@ DATA_URL = "https://data.cityofnewyork.us/api/views/h9gi-nx95/rows.csv"
 
 
 def csv_df_preprocess_to_parquet(df, file_name='crashes.parquet'):
+    """Preprocesses dataframe and writes to parquet file.
+
+    Args:
+        df (pandas dataframe): Pandas dataframe to be preprocessed.
+        file_name (str, optional): File name of parquet file. Defaults to 'crashes.parquet'.
+    """
     logging.info('Preprocessing dataframe to parquet')
 
     # remove all unwanted columns
