@@ -9,21 +9,23 @@ logging.basicConfig(level=logging.INFO, format=logformat)
 
 
 def commit_to_github(parquet_file_name='crashes.parquet'):
+    """Commits parquet file to github.
+
+    Args:
+        parquet_file_name (str, optional): File name of the parquet file to commit. Defaults to 'crashes.parquet'.
+    """
     # read github token from os env
     GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
     GITHUB_REPOSITORY = os.environ.get('GITHUB_REPOSITORY')
     GITHUB_BRANCH = os.environ.get('GITHUB_BRANCH')
-    GITHUB_REF = os.environ.get('GITHUB_REF')
 
     # check if env variables are set
     assert GITHUB_TOKEN, "GITHUB_TOKEN could not be loaded from env"
     assert GITHUB_REPOSITORY, "GITHUB_REPOSITORY could not be loaded from env"
     assert GITHUB_BRANCH, "GITHUB_BRANCH could not be loaded from env"
-    assert GITHUB_REF, "GITHUB_REF could not be loaded from env"
 
     logging.info(f'Github repository: {GITHUB_REPOSITORY}')
     logging.info(f'Github branch: {GITHUB_BRANCH}')
-    logging.info(f'Github ref: {GITHUB_REF}')
 
     # get github repo object from remote repo
     github_ = Github(GITHUB_TOKEN)
@@ -85,7 +87,7 @@ def get_blob_content(repo, branch, path_name):
 
 
 if __name__ == '__main__':
-    # local testing:
+    # only for local testing:
     from dotenv import load_dotenv
     load_dotenv()
     commit_to_github()

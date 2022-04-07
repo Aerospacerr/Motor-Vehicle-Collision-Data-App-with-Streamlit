@@ -1,10 +1,15 @@
 name: Scheduler Weekly
+# This workflow has two triggers:
+# - weekly cron job on sunday morning
+# - manual trigger from the github UI
 
 on:
-  # cron runs weekly at 07:13 UTC on Sunday = 03:13 New York time
+  # cron runs weekly at 07:13 UTC time on every Sunday
+  # this coresponds to 03:13 NYC time
+  # because we want to hit the NYC OpenData server at low traffic times
   schedule:
     - cron: '13 7 * * SUN'
-  # manually trigger the workflow
+  # manually trigger the workflow from the github UI
   workflow_dispatch:
 
 jobs:
@@ -17,7 +22,7 @@ jobs:
         run: python --version
       - name: Install pip libraries
         run: pip install --upgrade -r requirements-github-actions.txt
-      - name: Run python script to download latest CSV data from NYC Open Data
+      - name: Run python script to download latest CSV data from NYC Open Data and save as parquet file
         run: python github_action.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

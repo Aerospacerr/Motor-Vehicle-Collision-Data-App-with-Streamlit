@@ -13,6 +13,7 @@ logging.basicConfig(level=logging.INFO, format=logformat)
 
 def download_and_process(file_name='crashes.parquet', url=preprocessing.DATA_URL):
     """Downloads data from url and run preprocessing and store in parquet file.
+        (function deprecated)
 
     Args:
         file_name (str, optional): File name for parquet file. Defaults to 'crashes.parquet'.
@@ -73,6 +74,6 @@ def download_to_file_with_progress(file_name='crashes.csv', url=preprocessing.DA
 
 
 if __name__ == '__main__':
-    # local testing
+    # only for local testing:
     download_to_file_with_progress()
     # download_and_process()

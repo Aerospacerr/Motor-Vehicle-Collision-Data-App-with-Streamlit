@@ -1,11 +1,11 @@
-import warnings
 import logging
+import warnings
 
 import numpy as np
 import pandas as pd
 from pandas.core.common import SettingWithCopyWarning
 
-# TODO: check the reason for this warning and rewrite the code to remove it?
+# FIXME: check the reason for this warning and rewrite the code to remove it?
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
 logformat = '%(levelname)s:%(module)s: %(message)s'
@@ -84,7 +84,7 @@ def read_csv_to_parquet(in_file_name='crashes.csv', out_file_name='crashes.parqu
 
 
 if __name__ == '__main__':
-    # local testing
+    # only for local testing
     # logging.info(f'Reading data from url: "{DATA_URL}"')
     # read data from url, takes very long time
     # csv = pd.read_csv(DATA_URL, low_memory=False)

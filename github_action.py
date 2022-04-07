@@ -1,15 +1,19 @@
 import logging
 
 import downloader
-import preprocessing
 import gitcommiter
+import preprocessing
 
 logformat = '%(levelname)s:%(module)s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=logformat)
 
-# TODO: test git commit of parquet file
 
 def action():
+    """Main function of the github action.
+        - Downloads the csv file from the NYC website
+        - Preprocesses the csv file and stores it in a parquet file
+        - Uploads the parquet file to the github repository
+    """
     logging.info('Starting action')
     downloader.download_to_file_with_progress()
     preprocessing.read_csv_to_parquet()
