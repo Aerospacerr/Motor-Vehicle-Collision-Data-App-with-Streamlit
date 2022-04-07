@@ -1,6 +1,11 @@
+import warnings
+
 import numpy as np
 import pandas as pd
+from pandas.core.common import SettingWithCopyWarning
 
+# TODO: check the reason for this warning and rewrite the code to remove it?
+warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
 DATA_URL = "https://data.cityofnewyork.us/api/views/h9gi-nx95/rows.csv"
 

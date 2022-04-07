@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  VersionCheck:
+  Download-Latest-NYC-Crash-Data:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -17,7 +17,7 @@ jobs:
         run: python --version
       - name: Install pip libraries
         run: pip install --upgrade -r requirements-github-actions.txt
-      - name: Run python script to download newest csv data
+      - name: Run python script to download latest CSV data from NYC Open Data
         run: python downloader.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
