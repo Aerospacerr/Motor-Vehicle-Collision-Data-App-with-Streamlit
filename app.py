@@ -4,7 +4,6 @@ import plotly.express as px
 import pydeck as pdk
 import streamlit as st
 
-# DATA_URL = "https://data.cityofnewyork.us/api/views/h9gi-nx95/rows.csv"
 
 st.set_page_config(page_title="Motor Vehicle Collisions in NYC", page_icon='🚓',
                     layout='centered', initial_sidebar_state='collapsed')

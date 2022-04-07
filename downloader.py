@@ -1,27 +1,25 @@
 import io
 import logging
+from pathlib import Path
 
 import pandas as pd
 import requests
 
 import preprocessing
-# TODO: add git commit of parquet file
-# import gitcommiter
 
-logging.basicConfig(level=logging.INFO)
+logformat = '%(levelname)s:%(module)s: %(message)s'
+logging.basicConfig(level=logging.INFO, format=logformat)
 
-# TODO: refactor this file to use requests in streaming mode?
-# TODO: refactor this file to download file first?
 
-def main():
-    logging.info(f'Downloading data from {preprocessing.DATA_URL}')
+def download_and_process(file_name='crashes.csv', url=preprocessing.DATA_URL):
+    logging.info(f'Downloading data from {url}')
     try:
-        # download csv data with timout of 15 minutes
-        response = requests.get(url=preprocessing.DATA_URL, timeout=60*15, allow_redirects=False)
+        # download csv data with timout of 10 minutes
+        response = requests.get(url=url, timeout=60*10, allow_redirects=False)
     except requests.exceptions.Timeout as e:
-        logging.error(f'Timeout error: {e}')
+        logging.error(f'Timeout Exception: {e}')
     except requests.exceptions.RequestException as e:
-        logging.error(e)
+        logging.error(f'Request Exception: {e}')
     else:
         if response.status_code != 200:
             logging.error(f'Error: status code {response.status_code}')
@@ -34,26 +32,35 @@ def main():
                 logging.error(f'Error: {e}')
             else:
                 # preprocess data and write to parquet file
-                preprocessing.csv_df_preprocess_to_parquet(df=csv, file_name='crashes.parquet')
+                preprocessing.csv_df_preprocess_to_parquet(df=csv, file_name=file_name)
+
+
+def download_to_file_with_progress(file_name='crashes.csv', url=preprocessing.DATA_URL):
+    chunk_size = 65536  # bytes
+    update_every = 10_000_000  # every 10MB
+    update_divisor = int(update_every // chunk_size)  # number of chunks
+
+    # delete old file if exists
+    # Path(file_name).unlink(missing_ok=True)  # Python 3.8+
+    oldfile = Path(file_name)  # Python 3.7-
+    if oldfile.exists():
+        oldfile.unlink()
+
+    logging.info(f'Downloading data from {url}')
+
+    with requests.get(url=url, stream=True, timeout=60*10, allow_redirects=False) as response:
+        response.raise_for_status()
+        with open(file_name, 'wb') as file:
+            for i, chunk in enumerate(response.iter_content(chunk_size=chunk_size)):
+                if chunk:  # filter out keep-alive new chunks
+                    file.write(chunk)
+                    if (i % update_divisor) == 0:  # about every x MB we get an update
+                        logging.info(f'... downloaded {int((i * chunk_size) // 1_000_000)} MB')
+
+    logging.info(f'Download finished, saved to "{file_name}"')
 
 
 if __name__ == '__main__':
-    main()
-
-
-# https://stackoverflow.com/questions/37573483/progress-bar-while-download-file-over-http-with-requests
-# https://stackoverflow.com/questions/56795227/how-do-i-make-progress-bar-while-downloading-file-in-python
-
-# version with progress bar:
-# from tqdm import *
-# import requests
-# url = preprocessing.DATA_URL
-# name = "crashes.csv"
-# with requests.get(url, stream=True) as r:
-#     r.raise_for_status()
-#     with open(name, 'wb') as f:
-#         pbar = tqdm(total=int(r.headers['Content-Length']))
-#         for chunk in r.iter_content(chunk_size=8192):
-#             if chunk:  # filter out keep-alive new chunks
-#                 f.write(chunk)
-#                 pbar.update(len(chunk))
+    # local testing
+    download_to_file_with_progress()
+    # download_and_process()
