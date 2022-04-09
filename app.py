@@ -4,7 +4,6 @@ import plotly.express as px
 import pydeck as pdk
 import streamlit as st
 
-# DATA_URL = "https://data.cityofnewyork.us/api/views/h9gi-nx95/rows.csv"
 
 st.set_page_config(page_title="Motor Vehicle Collisions in NYC", page_icon='🚓',
                     layout='centered', initial_sidebar_state='collapsed')
@@ -30,7 +29,7 @@ def filter_data_by_hour(data, hour):
     return data[data['timestamp'].dt.hour == hour]
 
 @st.cache(show_spinner=False)
-def filter_data_by_type_of_people(data, type_of_people, amount=8):
+def filter_data_by_type_of_people(data, type_of_people, amount=10):
     return data[(data[type_of_people] > 0)][['on_street_name', 'off_street_name', type_of_people]].sort_values(
         by=[type_of_people], ascending=False).dropna(thresh=2).fillna('')[:amount]
 
@@ -64,7 +63,7 @@ hour = st.slider("Hour to look at", 0, 23)
 filtered_by_hour = filter_data_by_hour(data, hour)
 
 st.markdown("Vehicle collisions between %i:00 and %i:00" % (hour, (hour+1) % 24))
-midpoint = (filtered_by_hour['latitude'].median(), filtered_by_hour['longitude'].median())
+midpoint = (float(filtered_by_hour['latitude'].median()), float(filtered_by_hour['longitude'].median()))
 st.write(pdk.Deck(
     map_style="mapbox://styles/mapbox/light-v9",
     initial_view_state={
@@ -83,7 +82,6 @@ st.write(pdk.Deck(
             pickable=True,
             elevation_scale=4,
             elevation_range=[0, 1000],
-
         ),
     ],
 ))
@@ -95,7 +93,7 @@ chart_data = pd.DataFrame({'minute': range(60), 'crashes': hist})
 fig = px.bar(chart_data, x='minute', y='crashes', hover_data=['minute', 'crashes'], height=400)
 st.write(fig)
 
-st.header("Top 5 dangerous streets by affected type")
+st.header("Top 10 dangerous streets by affected type")
 select = st.selectbox('Affected type of people injured or killed',
             ['Persons Injured', 'Persons Killed', 'Pedestrians Injured', 'Pedestrians Killed',
             'Cyclist Injured', 'Cyclist Killed', 'Motorist Injured', 'Motorist Killed',])
@@ -108,4 +106,4 @@ st.table(get_all_contributing_factors())
 
 if st.checkbox("Show Raw Data", False):
     st.subheader('Raw Data')
-    st.write(data.head(100).fillna(''))  # limit to first 100 rows
+    st.write(data.head(100).astype(pd.StringDtype()).fillna(''))  # limit to first 100 rows
